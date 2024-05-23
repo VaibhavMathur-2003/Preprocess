@@ -4,6 +4,7 @@ import pandas as pd
 from io import StringIO
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+import numpy as np
 
 app = Flask(__name__)
 cors = CORS(app, origins='*')
@@ -64,16 +65,20 @@ def preprocess_data():
             convert_to = option['convertTo']
             encode_as = option['encodeAs']
 
-            if method == 'remove':
-                df = df.drop(columns=[header])
-            else:
-                strategy = method
-                imputer = SimpleImputer(strategy=strategy)
-                df[[header]] = imputer.fit_transform(df[[header]])
+            # Handle 'none' option for imputation method
+            if method != 'none':
+                if method == 'remove':
+                    df = df.drop(columns=[header])
+                else:
+                    strategy = method
+                    imputer = SimpleImputer(strategy=strategy)
+                    df[[header]] = imputer.fit_transform(df[[header]])
 
+            # Handle 'none' option for type conversion
             if convert_to != 'none':
                 df = convert_column(df, header, convert_to)
 
+            # Handle 'none' option for encoding
             if encode_as != 'none':
                 df = encode_column(df, header, encode_as)
 
@@ -82,10 +87,23 @@ def preprocess_data():
 
         df.to_csv('preprocessed_file.csv', index=False)  # Save the preprocessed file
 
-        first_five_rows = df.head().to_dict(orient='records')
-        stats = df.describe().to_dict()
+        # Replace NaN values with a specific value (e.g., 0)
+        df_json = df.replace(np.nan, None)
 
-        return jsonify({"message": "Preprocessing successful", "first_five_rows": first_five_rows, "stats": stats}), 200
+
+        # Convert DataFrame to list of dictionaries
+        json_data = df_json.to_dict(orient='records')
+
+        # Generate descriptive statistics, ensuring to replace NaN with None
+        stats = df.describe().replace({pd.NA: None, pd.NaT: None}).to_dict()
+
+        response = {
+            "message": "Preprocessing successful",
+            "first_five_rows": json_data[:5],  # Include only the first five rows
+            "stats": stats
+        }
+
+        return jsonify(response)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

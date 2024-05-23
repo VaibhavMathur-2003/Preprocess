@@ -71,8 +71,8 @@ const App = () => {
 
     const options = headers.map(header => ({
       header,
-      method: preprocessingOptions[header] || 'mean',
-      convertTo: conversionOptions[header] || 'string',
+      method: preprocessingOptions[header] || 'none',
+      convertTo: conversionOptions[header] || 'none',
       encodeAs: encodingOptions[header] || 'none',
     }));
 
@@ -100,13 +100,15 @@ const App = () => {
           {headers.map((header, index) => (
             <div key={index}>
               <label>{header}</label>
-              <select value={preprocessingOptions[header] || 'mean'} onChange={handlePreprocessingOptionChange(header)}>
+              <select value={preprocessingOptions[header] || 'none'} onChange={handlePreprocessingOptionChange(header)}>
+                <option value="none">None</option>
                 <option value="mean">Mean</option>
                 <option value="median">Median</option>
-                <option value="most_frequent">most_frequent</option>
+                <option value="most_frequent">Most Frequent</option>
                 <option value="remove">Remove</option>
               </select>
-              <select value={conversionOptions[header] || 'string'} onChange={handleConversionOptionChange(header)}>
+              <select value={conversionOptions[header] || 'none'} onChange={handleConversionOptionChange(header)}>
+                <option value="none">None</option>
                 <option value="string">String</option>
                 <option value="integer">Integer</option>
                 <option value="float">Float</option>
