@@ -11,6 +11,12 @@ const App = () => {
   const [removeDuplicates, setRemoveDuplicates] = useState(false);
   const [firstFiveRows, setFirstFiveRows] = useState([]);
   const [stats, setStats] = useState({});
+  const [correlationHeatmap, setCorrelationHeatmap] = useState('');
+  const [plotType, setPlotType] = useState('scatter');
+  const [xColumn, setXColumn] = useState('');
+  const [yColumn, setYColumn] = useState('');
+  const [hue, setHue] = useState('');
+  const [plot, setPlot] = useState('');
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -81,8 +87,25 @@ const App = () => {
       setError('Preprocessing successful');
       setFirstFiveRows(response.data.first_five_rows || []);
       setStats(response.data.stats || {});
+      setCorrelationHeatmap(response.data.correlation_heatmap || '');
     } catch (err) {
       setError(err.response ? err.response.data.error : 'Error preprocessing data');
+    }
+  };
+
+  const handlePlot = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post('http://127.0.0.1:5000/api/plot', {
+        plotType,
+        xColumn,
+        yColumn: yColumn || null,
+        hue: hue || null
+      });
+      setPlot(response.data.plot);
+    } catch (err) {
+      setError(err.response ? err.response.data.error : 'Error generating plot');
     }
   };
 
@@ -176,6 +199,61 @@ const App = () => {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+      {correlationHeatmap && (
+        <div>
+          <h3>Correlation Heatmap</h3>
+          <img src={`data:image/png;base64,${correlationHeatmap}`} alt="Correlation Heatmap" />
+        </div>
+      )}
+      {headers.length > 0 && (
+        <form onSubmit={handlePlot}>
+          <h3>Create a Plot</h3>
+          <div>
+            <label>Plot Type</label>
+            <select value={plotType} onChange={(e) => setPlotType(e.target.value)}>
+              <option value="scatter">Scatter</option>
+              <option value="line">Line</option>
+              <option value="bar">Bar</option>
+              <option value="hist">Histogram</option>
+              <option value="box">Box</option>
+              <option value="violin">Violin</option>
+            </select>
+          </div>
+          <div>
+            <label>X Column</label>
+            <select value={xColumn} onChange={(e) => setXColumn(e.target.value)}>
+              {headers.map((header, index) => (
+                <option key={index} value={header}>{header}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label>Y Column (Optional)</label>
+            <select value={yColumn} onChange={(e) => setYColumn(e.target.value)}>
+              <option value="">None</option>
+              {headers.map((header, index) => (
+                <option key={index} value={header}>{header}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label>Hue (Optional)</label>
+            <select value={hue} onChange={(e) => setHue(e.target.value)}>
+              <option value="">None</option>
+              {headers.map((header, index) => (
+                <option key={index} value={header}>{header}</option>
+              ))}
+            </select>
+          </div>
+          <button type="submit">Generate Plot</button>
+        </form>
+      )}
+      {plot && (
+        <div>
+          <h3>Generated Plot</h3>
+          <img src={`data:image/png;base64,${plot}`} alt="Generated Plot" />
         </div>
       )}
     </div>
