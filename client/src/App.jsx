@@ -1,22 +1,24 @@
-import { useState } from 'react';
-import axios from 'axios';
+import { useState } from "react";
+import axios from "axios";
 
 const App = () => {
   const [file, setFile] = useState(null);
   const [headers, setHeaders] = useState([]);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [preprocessingOptions, setPreprocessingOptions] = useState({});
   const [conversionOptions, setConversionOptions] = useState({});
   const [encodingOptions, setEncodingOptions] = useState({});
+  const [outlierOptions, setOutlierOptions] = useState({});
+  const [scalingOptions, setScalingOptions] = useState({});
   const [removeDuplicates, setRemoveDuplicates] = useState(false);
   const [firstFiveRows, setFirstFiveRows] = useState([]);
   const [stats, setStats] = useState({});
-  const [correlationHeatmap, setCorrelationHeatmap] = useState('');
-  const [plotType, setPlotType] = useState('scatter');
-  const [xColumn, setXColumn] = useState('');
-  const [yColumn, setYColumn] = useState('');
-  const [hue, setHue] = useState('');
-  const [plot, setPlot] = useState('');
+  const [correlationHeatmap, setCorrelationHeatmap] = useState("");
+  const [plotType, setPlotType] = useState("scatter");
+  const [xColumn, setXColumn] = useState("");
+  const [yColumn, setYColumn] = useState("");
+  const [hue, setHue] = useState("");
+  const [plot, setPlot] = useState("");
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -24,26 +26,30 @@ const App = () => {
 
   const handleUpload = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setHeaders([]);
 
     if (!file) {
-      setError('No file selected');
+      setError("No file selected");
       return;
     }
 
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
 
     try {
-      const response = await axios.post('http://127.0.0.1:5000/api/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
+      const response = await axios.post(
+        "http://127.0.0.1:5000/api/upload",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
-      });
+      );
       setHeaders(response.data.headers);
     } catch (err) {
-      setError(err.response ? err.response.data.error : 'Error uploading file');
+      setError(err.response ? err.response.data.error : "Error uploading file");
     }
   };
 
@@ -68,6 +74,20 @@ const App = () => {
     });
   };
 
+  const handleOutlierOptionChange = (header) => (e) => {
+    setOutlierOptions({
+      ...outlierOptions,
+      [header]: e.target.value,
+    });
+  };
+
+  const handleScalingOptionChange = (header) => (e) => {
+    setScalingOptions({
+      ...scalingOptions,
+      [header]: e.target.value,
+    });
+  };
+
   const handleRemoveDuplicatesChange = (e) => {
     setRemoveDuplicates(e.target.checked);
   };
@@ -75,21 +95,28 @@ const App = () => {
   const handlePreprocess = async (e) => {
     e.preventDefault();
 
-    const options = headers.map(header => ({
+    const options = headers.map((header) => ({
       header,
-      method: preprocessingOptions[header] || 'none',
-      convertTo: conversionOptions[header] || 'none',
-      encodeAs: encodingOptions[header] || 'none',
+      method: preprocessingOptions[header] || "none",
+      convertTo: conversionOptions[header] || "none",
+      encodeAs: encodingOptions[header] || "none",
+      outlierMethod: outlierOptions[header] || "none",
+      scaling: scalingOptions[header] || "none",
     }));
 
     try {
-      const response = await axios.post('http://127.0.0.1:5000/api/preprocess', { options, removeDuplicates });
-      setError('Preprocessing successful');
+      const response = await axios.post(
+        "http://127.0.0.1:5000/api/preprocess",
+        { options, removeDuplicates }
+      );
+      setError("Preprocessing successful");
       setFirstFiveRows(response.data.first_five_rows || []);
       setStats(response.data.stats || {});
-      setCorrelationHeatmap(response.data.correlation_heatmap || '');
+      setCorrelationHeatmap(response.data.correlation_heatmap || "");
     } catch (err) {
-      setError(err.response ? err.response.data.error : 'Error preprocessing data');
+      setError(
+        err.response ? err.response.data.error : "Error preprocessing data"
+      );
     }
   };
 
@@ -97,15 +124,17 @@ const App = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://127.0.0.1:5000/api/plot', {
+      const response = await axios.post("http://127.0.0.1:5000/api/plot", {
         plotType,
         xColumn,
         yColumn: yColumn || null,
-        hue: hue || null
+        hue: hue || null,
       });
       setPlot(response.data.plot);
     } catch (err) {
-      setError(err.response ? err.response.data.error : 'Error generating plot');
+      setError(
+        err.response ? err.response.data.error : "Error generating plot"
+      );
     }
   };
 
@@ -116,37 +145,66 @@ const App = () => {
         <input type="file" accept=".csv" onChange={handleFileChange} />
         <button type="submit">Upload</button>
       </form>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
       {headers.length > 0 && (
         <form onSubmit={handlePreprocess}>
           <h3>Select Preprocessing Methods and Conversion Types for Headers</h3>
           {headers.map((header, index) => (
             <div key={index}>
               <label>{header}</label>
-              <select value={preprocessingOptions[header] || 'none'} onChange={handlePreprocessingOptionChange(header)}>
+              <select
+                value={preprocessingOptions[header] || "none"}
+                onChange={handlePreprocessingOptionChange(header)}
+              >
                 <option value="none">None</option>
                 <option value="mean">Mean</option>
                 <option value="median">Median</option>
                 <option value="most_frequent">Most Frequent</option>
                 <option value="remove">Remove</option>
               </select>
-              <select value={conversionOptions[header] || 'none'} onChange={handleConversionOptionChange(header)}>
+              <select
+                value={conversionOptions[header] || "none"}
+                onChange={handleConversionOptionChange(header)}
+              >
                 <option value="none">None</option>
                 <option value="string">String</option>
                 <option value="integer">Integer</option>
                 <option value="float">Float</option>
                 <option value="datetime">Datetime</option>
               </select>
-              <select value={encodingOptions[header] || 'none'} onChange={handleEncodingOptionChange(header)}>
+              <select
+                value={encodingOptions[header] || "none"}
+                onChange={handleEncodingOptionChange(header)}
+              >
                 <option value="none">None</option>
                 <option value="label">Label Encoding</option>
                 <option value="onehot">One-Hot Encoding</option>
+              </select>
+              <select
+                value={outlierOptions[header] || "none"}
+                onChange={handleOutlierOptionChange(header)}
+              >
+                <option value="none">None</option>
+                <option value="z_score">Z-Score</option>
+                <option value="iqr">IQR</option>
+              </select>
+              <select
+                value={scalingOptions[header] || "none"}
+                onChange={handleScalingOptionChange(header)}
+              >
+                <option value="none">None</option>
+                <option value="normalization">Normalization</option>
+                <option value="standardization">Standardization</option>
               </select>
             </div>
           ))}
           <div>
             <label>
-              <input type="checkbox" checked={removeDuplicates} onChange={handleRemoveDuplicatesChange} />
+              <input
+                type="checkbox"
+                checked={removeDuplicates}
+                onChange={handleRemoveDuplicatesChange}
+              />
               Remove duplicate entries
             </label>
           </div>
@@ -183,20 +241,24 @@ const App = () => {
             <thead>
               <tr>
                 <th>Statistic</th>
-                {Object.keys(stats).map((key) => (
-                  <th key={key}>{key}</th>
-                ))}
+                {Object.keys(stats[Object.keys(stats)[0]] || {}).map(
+                  (statKey) => (
+                    <th key={statKey}>{statKey}</th>
+                  )
+                )}
               </tr>
             </thead>
             <tbody>
-              {Object.keys(stats[Object.keys(stats)[0]] || {}).map((statKey) => (
-                <tr key={statKey}>
-                  <td>{statKey}</td>
-                  {Object.keys(stats).map((key) => (
-                    <td key={key}>{stats[key][statKey]}</td>
-                  ))}
-                </tr>
-              ))}
+              {Object.keys(stats[Object.keys(stats)[0]] || {}).map(
+                (statKey) => (
+                  <tr key={statKey}>
+                    <td>{statKey}</td>
+                    {Object.keys(stats).map((key) => (
+                      <td key={key}>{stats[key][statKey]}</td>
+                    ))}
+                  </tr>
+                )
+              )}
             </tbody>
           </table>
         </div>
@@ -204,7 +266,10 @@ const App = () => {
       {correlationHeatmap && (
         <div>
           <h3>Correlation Heatmap</h3>
-          <img src={`data:image/png;base64,${correlationHeatmap}`} alt="Correlation Heatmap" />
+          <img
+            src={`data:image/png;base64,${correlationHeatmap}`}
+            alt="Correlation Heatmap"
+          />
         </div>
       )}
       {headers.length > 0 && (
@@ -212,7 +277,10 @@ const App = () => {
           <h3>Create a Plot</h3>
           <div>
             <label>Plot Type</label>
-            <select value={plotType} onChange={(e) => setPlotType(e.target.value)}>
+            <select
+              value={plotType}
+              onChange={(e) => setPlotType(e.target.value)}
+            >
               <option value="scatter">Scatter</option>
               <option value="line">Line</option>
               <option value="bar">Bar</option>
@@ -223,18 +291,28 @@ const App = () => {
           </div>
           <div>
             <label>X Column</label>
-            <select value={xColumn} onChange={(e) => setXColumn(e.target.value)}>
+            <select
+              value={xColumn}
+              onChange={(e) => setXColumn(e.target.value)}
+            >
               {headers.map((header, index) => (
-                <option key={index} value={header}>{header}</option>
+                <option key={index} value={header}>
+                  {header}
+                </option>
               ))}
             </select>
           </div>
           <div>
             <label>Y Column (Optional)</label>
-            <select value={yColumn} onChange={(e) => setYColumn(e.target.value)}>
+            <select
+              value={yColumn}
+              onChange={(e) => setYColumn(e.target.value)}
+            >
               <option value="">None</option>
               {headers.map((header, index) => (
-                <option key={index} value={header}>{header}</option>
+                <option key={index} value={header}>
+                  {header}
+                </option>
               ))}
             </select>
           </div>
@@ -243,7 +321,9 @@ const App = () => {
             <select value={hue} onChange={(e) => setHue(e.target.value)}>
               <option value="">None</option>
               {headers.map((header, index) => (
-                <option key={index} value={header}>{header}</option>
+                <option key={index} value={header}>
+                  {header}
+                </option>
               ))}
             </select>
           </div>

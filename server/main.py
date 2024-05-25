@@ -6,8 +6,12 @@ import matplotlib.pyplot as plt
 from io import BytesIO, StringIO
 import base64
 from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder, StandardScaler, MinMaxScaler
+
 import numpy as np
+
+import matplotlib
+matplotlib.use('Agg')
 
 app = Flask(__name__)
 cors = CORS(app, origins='*')
@@ -16,7 +20,7 @@ cors = CORS(app, origins='*')
 def upload_csv():
     if 'file' not in request.files:
         return jsonify({"error": "No file part in the request"}), 400
-    
+
     file = request.files['file']
     if file.filename == '':
         return jsonify({"error": "No file selected for uploading"}), 400
@@ -26,7 +30,7 @@ def upload_csv():
         delimiter = ';' if ';' in content.split('\n')[0] else ','
         df = pd.read_csv(StringIO(content), delimiter=delimiter)
         headers = list(df.columns)
-        df.to_csv('uploaded_file.csv', index=False)  # Save the uploaded file for preprocessing
+        df.to_csv('uploaded_file.csv', index=False)  
         return jsonify({"headers": headers}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -53,6 +57,31 @@ def encode_column(df, column, encoding_type):
         df = pd.concat([df, ohe_df], axis=1).drop(columns=[column])
     return df
 
+def remove_outliers_zscore(df, column, threshold=3):
+    if df[column].dtype in [np.float64, np.int64]:  
+        z_scores = np.abs((df[column] - df[column].mean()) / df[column].std())
+        return df[z_scores < threshold]
+    return df
+
+def remove_outliers_iqr(df, column):
+    if df[column].dtype in [np.float64, np.int64]:  
+        Q1 = df[column].quantile(0.25)
+        Q3 = df[column].quantile(0.75)
+        IQR = Q3 - Q1
+        return df[(df[column] >= (Q1 - 1.5 * IQR)) & (df[column] <= (Q3 + 1.5 * IQR))]
+    return df
+
+def normalize_column(df, column):
+    scaler = MinMaxScaler()
+    df[column] = scaler.fit_transform(df[[column]])
+    return df
+
+def standardize_column(df, column):
+    scaler = StandardScaler()
+    df[column] = scaler.fit_transform(df[[column]])
+    return df
+
+
 @app.route('/api/preprocess', methods=['POST'])
 def preprocess_data():
     try:
@@ -64,11 +93,18 @@ def preprocess_data():
 
         for option in options:
             header = option['header']
-            method = option['method']
-            convert_to = option['convertTo']
-            encode_as = option['encodeAs']
+            method = option.get('method', 'none')
+            convert_to = option.get('convertTo', 'none')
+            encode_as = option.get('encodeAs', 'none')
+            outlier_method = option.get('outlierMethod', 'none')
+            scaling = option.get('scaling', 'none')
 
-            # Handle 'none' option for imputation method
+            if outlier_method != 'none':
+                if outlier_method == 'z_score':
+                    df = remove_outliers_zscore(df, header)
+                elif outlier_method == 'iqr':
+                    df = remove_outliers_iqr(df, header)
+
             if method != 'none':
                 if method == 'remove':
                     df = df.drop(columns=[header])
@@ -77,39 +113,36 @@ def preprocess_data():
                     imputer = SimpleImputer(strategy=strategy)
                     df[[header]] = imputer.fit_transform(df[[header]])
 
-            # Handle 'none' option for type conversion
             if convert_to != 'none':
                 df = convert_column(df, header, convert_to)
 
-            # Handle 'none' option for encoding
             if encode_as != 'none':
                 df = encode_column(df, header, encode_as)
+                
+            if scaling != 'none':
+                if scaling == 'normalization':
+                    scaler = MinMaxScaler()
+                elif scaling == 'standardization':
+                    scaler = StandardScaler()
+                df[[header]] = scaler.fit_transform(df[[header]])
 
         if remove_duplicates:
             df = df.drop_duplicates()
 
-        df.to_csv('preprocessed_file.csv', index=False)  # Save the preprocessed file
+        df.to_csv('preprocessed_file.csv', index=False) 
 
-        # Replace NaN values with a specific value (e.g., 0)
-        df_json = df.replace(np.nan, None)
-
-        # Convert DataFrame to list of dictionaries
+        df_json = df.replace({np.nan: None, pd.NaT: None})  
         json_data = df_json.to_dict(orient='records')
+        stats = df.describe().replace({np.nan: None}).to_dict()
 
-        # Generate descriptive statistics, ensuring to replace NaN with None
-        stats = df.describe().replace({pd.NA: None, pd.NaT: None}).to_dict()
-
-        # Generate correlation heatmap for numeric columns
-        numeric_df = df.select_dtypes(include=[np.number])  # Select only numeric columns
+        numeric_df = df.select_dtypes(include=[np.number])  
         if not numeric_df.empty:
             corr = numeric_df.corr()
 
-            # Plotting the heatmap
             plt.figure(figsize=(10, 8))
             sns.heatmap(corr, annot=True, fmt='.2f', cmap='coolwarm')
             plt.title('Correlation Heatmap')
 
-            # Save the plot to a BytesIO object
             buf = BytesIO()
             plt.savefig(buf, format='png')
             plt.close()
@@ -120,7 +153,7 @@ def preprocess_data():
 
         response = {
             "message": "Preprocessing successful",
-            "first_five_rows": json_data[:5],  # Include only the first five rows
+            "first_five_rows": json_data[:5],  
             "stats": stats,
             "correlation_heatmap": heatmap_base64
         }
@@ -128,6 +161,7 @@ def preprocess_data():
         return jsonify(response)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/api/plot', methods=['POST'])
 def plot_data():
@@ -140,7 +174,6 @@ def plot_data():
 
         df = pd.read_csv('preprocessed_file.csv')  # Load the preprocessed file
 
-        # Plot based on the selected type
         plt.figure(figsize=(10, 6))
 
         if plot_type == 'scatter':
@@ -158,7 +191,6 @@ def plot_data():
 
         plt.title(f'{plot_type.capitalize()} Plot')
 
-        # Save the plot to a BytesIO object
         buf = BytesIO()
         plt.savefig(buf, format='png')
         plt.close()
