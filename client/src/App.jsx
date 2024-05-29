@@ -145,24 +145,43 @@ const App = () => {
     }
   };
 
+  const handleDownload = async () => {
+    try {
+      await preprocessData();
+      const response = await axios.get("http://127.0.0.1:5000/api/download_preprocessed", {
+        responseType: 'blob', 
+      });
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'preprocessed.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      setError(err.response ? err.response.data.error : "Error downloading file");
+    }
+  };
+  
+
   const renderStep = () => {
     switch (currentStep) {
       case 1:
-        return <Upload handleFileChange={handleFileChange} handleUpload={handleUpload} />;
+        return <Upload handleFileChange={handleFileChange} handleUpload={handleUpload} handleDownload={handleDownload}  />;
       case 2:
-        return <Conversion headers={headers} conversionOptions={conversionOptions} handleConversionOptionChange={handleConversionOptionChange} handlePrevious={handlePrevious} handleNext={handleNext} />;
+        return <Conversion headers={headers} conversionOptions={conversionOptions} handleConversionOptionChange={handleConversionOptionChange} handlePrevious={handlePrevious} handleNext={handleNext} handleDownload={handleDownload}  />;
       case 3:
-        return <MissingValues headers={headers} preprocessingOptions={preprocessingOptions} handlePreprocessingOptionChange={handlePreprocessingOptionChange} handlePrevious={handlePrevious} handleNext={handleNext} />;
+        return <MissingValues headers={headers} preprocessingOptions={preprocessingOptions} handlePreprocessingOptionChange={handlePreprocessingOptionChange} handlePrevious={handlePrevious} handleNext={handleNext} handleDownload={handleDownload}  />;
       case 4:
-        return <Encoding headers={headers} encodingOptions={encodingOptions} handleEncodingOptionChange={handleEncodingOptionChange} handlePrevious={handlePrevious} handleNext={handleNext} />;
+        return <Encoding headers={headers} encodingOptions={encodingOptions} handleEncodingOptionChange={handleEncodingOptionChange} handlePrevious={handlePrevious} handleNext={handleNext} handleDownload={handleDownload}  />;
       case 5:
-        return <Outliers headers={headers} outlierOptions={outlierOptions} handleOutlierOptionChange={handleOutlierOptionChange} handlePrevious={handlePrevious} handleNext={handleNext} />;
+        return <Outliers headers={headers} outlierOptions={outlierOptions} handleOutlierOptionChange={handleOutlierOptionChange} handlePrevious={handlePrevious} handleNext={handleNext} handleDownload={handleDownload}  />;
       case 6:
-        return <Scaling headers={headers} scalingOptions={scalingOptions} handleScalingOptionChange={handleScalingOptionChange} removeDuplicates={removeDuplicates} handleRemoveDuplicatesChange={handleRemoveDuplicatesChange} handlePrevious={handlePrevious} handleNext={handleNext} />;
+        return <Scaling headers={headers} scalingOptions={scalingOptions} handleScalingOptionChange={handleScalingOptionChange} removeDuplicates={removeDuplicates} handleRemoveDuplicatesChange={handleRemoveDuplicatesChange} handlePrevious={handlePrevious} handleNext={handleNext} handleDownload={handleDownload}  />;
       case 7:
-        return <PreProcessedData firstFiveRows={firstFiveRows} handlePrevious={handlePrevious} handleNext={handleNext} />;
+        return <PreProcessedData firstFiveRows={firstFiveRows} stats={stats} handlePrevious={handlePrevious} handleNext={handleNext} handleDownload={handleDownload}  />;
       case 8:
-        return <StatsAndPlot headers={headers} stats={stats} correlationHeatmap={correlationHeatmap} plotType={plotType} setPlotType={setPlotType} xColumn={xColumn} setXColumn={setXColumn} yColumn={yColumn} setYColumn={setYColumn} hue={hue} setHue={setHue} plot={plot} handlePlot={handlePlot} handlePrevious={handlePrevious} />;
+        return <StatsAndPlot headers={headers}  correlationHeatmap={correlationHeatmap} plotType={plotType} setPlotType={setPlotType} xColumn={xColumn} setXColumn={setXColumn} yColumn={yColumn} setYColumn={setYColumn} hue={hue} setHue={setHue} plot={plot} handlePlot={handlePlot} handlePrevious={handlePrevious} handleDownload={handleDownload}  />;
       default:
         return null;
     }

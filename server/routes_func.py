@@ -7,6 +7,8 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 import base64
 import numpy as np
+from flask import send_file
+
 
 from functions import (
     convert_column, encode_column, remove_outliers_zscore,
@@ -125,3 +127,11 @@ def plot_data():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+def download_preprocessed():
+    try:
+        file_path = 'preprocessed_file.csv'  # Make sure this path is correct
+        return send_file(file_path, as_attachment=True, download_name='preprocessed.csv')
+    except Exception as e:
+        return str(e), 500
