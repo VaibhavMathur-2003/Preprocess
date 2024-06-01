@@ -1,3 +1,4 @@
+// src/App.js
 import { useState } from 'react';
 import axios from 'axios';
 import Upload from './Components/Upload';
@@ -8,6 +9,7 @@ import Outliers from './Components/Outliers';
 import Scaling from './Components/Scaling';
 import PreProcessedData from './Components/PreProcessedData';
 import StatsAndPlot from './Components/StatsAndPlot';
+import FeatureSelection from './Components/FeatureSelection';
 
 const App = () => {
   const [file, setFile] = useState(null);
@@ -151,7 +153,7 @@ const App = () => {
       const response = await axios.get("http://127.0.0.1:5000/api/download_preprocessed", {
         responseType: 'blob', 
       });
-        const url = window.URL.createObjectURL(new Blob([response.data]));
+      const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
       link.setAttribute('download', 'preprocessed.csv');
@@ -182,6 +184,8 @@ const App = () => {
         return <PreProcessedData firstFiveRows={firstFiveRows} stats={stats} handlePrevious={handlePrevious} handleNext={handleNext} handleDownload={handleDownload}  />;
       case 8:
         return <StatsAndPlot headers={headers}  correlationHeatmap={correlationHeatmap} plotType={plotType} setPlotType={setPlotType} xColumn={xColumn} setXColumn={setXColumn} yColumn={yColumn} setYColumn={setYColumn} hue={hue} setHue={setHue} plot={plot} handlePlot={handlePlot} handlePrevious={handlePrevious} handleDownload={handleDownload}  />;
+      case 9:
+        return <FeatureSelection headers={headers} handlePrevious={handlePrevious} handleNext={handleNext} handleDownload={handleDownload} />;
       default:
         return null;
     }

@@ -7,6 +7,8 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder, StandardScaler, MinMaxScaler
 import numpy as np
 import matplotlib
+from sklearn.feature_selection import SelectKBest, f_classif
+from sklearn.ensemble import ExtraTreesClassifier
 
 matplotlib.use('Agg')
 
@@ -46,15 +48,7 @@ def remove_outliers_iqr(df, column):
         return df[(df[column] >= (Q1 - 1.5 * IQR)) & (df[column] <= (Q3 + 1.5 * IQR))]
     return df
 
-def normalize_column(df, column):
-    scaler = MinMaxScaler()
-    df[column] = scaler.fit_transform(df[[column]])
-    return df
 
-def standardize_column(df, column):
-    scaler = StandardScaler()
-    df[column] = scaler.fit_transform(df[[column]])
-    return df
 
 def generate_correlation_heatmap(df):
     numeric_df = df.select_dtypes(include=[np.number])
@@ -69,3 +63,34 @@ def generate_correlation_heatmap(df):
         buf.seek(0)
         return base64.b64encode(buf.read()).decode('utf-8')
     return None
+
+def select_k_best_features(df, target_column, k=10):
+    numeric_columns = df.select_dtypes(include=[np.number]).columns
+    X_numeric = df[numeric_columns]
+    y = df[target_column]
+    
+    if len(numeric_columns) == 0:
+        raise ValueError("No numeric features found to select from.")
+    
+    # Apply SelectKBest with ANOVA F-test
+    selector = SelectKBest(score_func=f_classif, k=min(k, len(numeric_columns)))
+    X_new = selector.fit_transform(X_numeric, y)
+    
+    selected_columns = X_numeric.columns[selector.get_support(indices=True)]
+    return df[list(selected_columns)]
+
+def select_features_using_extratrees(df, target_column, n_estimators=100):
+    numeric_columns = df.select_dtypes(include=[np.number]).columns
+    X_numeric = df[numeric_columns]
+    y = df[target_column]
+    
+    # Apply ExtraTreesClassifier for feature selection
+    model = ExtraTreesClassifier(n_estimators=n_estimators)
+    model.fit(X_numeric, y)
+    
+    importances = model.feature_importances_
+    feature_importances = pd.Series(importances, index=X_numeric.columns)
+    
+    # Select features with importance greater than the mean importance
+    selected_columns = feature_importances[feature_importances > feature_importances.mean()].index
+    return df[list(selected_columns)]

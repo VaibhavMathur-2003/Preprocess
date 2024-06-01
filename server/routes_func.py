@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import Flask, request, jsonify, send_file
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -7,15 +7,16 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 import base64
 import numpy as np
-from flask import send_file
-
 
 from functions import (
     convert_column, encode_column, remove_outliers_zscore,
-    remove_outliers_iqr, normalize_column, standardize_column,
-    generate_correlation_heatmap
+    remove_outliers_iqr, generate_correlation_heatmap,
+    select_k_best_features, select_features_using_extratrees
 )
 
+app = Flask(__name__)
+
+@app.route('/upload_csv', methods=['POST'])
 def upload_csv():
     if 'file' not in request.files:
         return jsonify({"error": "No file part in the request"}), 400
@@ -34,6 +35,7 @@ def upload_csv():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/preprocess_data', methods=['POST'])
 def preprocess_data():
     try:
         data = request.json
@@ -89,6 +91,7 @@ def preprocess_data():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/plot_data', methods=['POST'])
 def plot_data():
     try:
         data = request.json
@@ -128,10 +131,38 @@ def plot_data():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
+@app.route('/download_preprocessed', methods=['GET'])
 def download_preprocessed():
     try:
         file_path = 'preprocessed_file.csv'  # Make sure this path is correct
         return send_file(file_path, as_attachment=True, download_name='preprocessed.csv')
     except Exception as e:
         return str(e), 500
+
+@app.route('/select_features', methods=['POST'])
+def select_features():
+    try:
+        data = request.json
+        target_column = data['targetColumn']
+        method = data['method']
+        k = data.get('k', 10)  # Default to 10 features for SelectKBest
+        n_estimators = data.get('nEstimators', 100)  # Default to 100 estimators for ExtraTreesClassifier
+
+        df = pd.read_csv('preprocessed_file.csv')
+
+        if method == 'select_k_best':
+            df = select_k_best_features(df, target_column, k)
+        elif method == 'extra_trees':
+            df = select_features_using_extratrees(df, target_column, n_estimators)
+        else:
+            return jsonify({"error": "Invalid feature selection method specified"}), 400
+
+        headers = list(df.columns)
+        df.to_csv('selected_features_file.csv', index=False)
+
+        return jsonify({"headers": headers}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+if __name__ == '__main__':
+    app.run(debug=True)
