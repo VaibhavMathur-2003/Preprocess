@@ -1,15 +1,15 @@
 import PropTypes from "prop-types";
 
 const PreProcessedData = ({ firstFiveRows,stats, handlePrevious, handleNext, handleDownload }) => (
-  <div className="min-h-screen flex items-center justify-center bg-gray-100">
-    <div className="bg-white p-8 rounded-lg shadow-md w-full ">
-      <h3 className="text-2xl font-semibold mb-6 text-center text-gray-800">First Five Rows of Preprocessed Data</h3>
+  <div className="min-h-screen flex items-center justify-center bg-gray-800">
+    <div className="bg-white p-8 rounded-lg shadow-md w-full bg-gray-800">
+      <h3 className="text-2xl font-semibold mb-6 text-center text-white">First Five Rows of Preprocessed Data</h3>
       {firstFiveRows.length > 0 && (
-        <table className="w-full border-collapse border border-gray-300">
+        <table className="w-full border-collapse border border-blue-500 text-white">
           <thead>
-            <tr className="bg-gray-100">
+            <tr className="bg-gray-700">
               {Object.keys(firstFiveRows[0]).map((key) => (
-                <th key={key} className="p-2 border border-gray-300">{key}</th>
+                <th key={key} className="p-2 border border-blue-500">{key}</th>
               ))}
             </tr>
           </thead>
@@ -17,7 +17,7 @@ const PreProcessedData = ({ firstFiveRows,stats, handlePrevious, handleNext, han
             {firstFiveRows.map((row, index) => (
               <tr key={index}>
                 {Object.values(row).map((value, idx) => (
-                  <td key={idx} className="p-2 border border-gray-300">{value}</td>
+                  <td key={idx} className="p-2 border border-blue-500">{value}</td>
                 ))}
               </tr>
             ))}
@@ -26,22 +26,22 @@ const PreProcessedData = ({ firstFiveRows,stats, handlePrevious, handleNext, han
       )}
       {Object.keys(stats).length > 0 && (
         <div>
-          <h3 className="text-xl font-semibold mb-4 text-gray-800">Statistical Data</h3>
-          <table className="w-full table-auto">
+          <h3 className="text-xl font-semibold mb-4 text-white">Statistical Data</h3>
+          <table className="w-full table-auto text-white">
             <thead>
-              <tr className="bg-gray-200">
-                <th className="py-2 px-4 border border-gray-300">Statistic</th>
+              <tr className="bg-gray-700">
+                <th className="py-2 px-4 border border-blue-500">Statistic</th>
                 {Object.keys(stats[Object.keys(stats)[0]] || {}).map((statKey) => (
-                  <th key={statKey} className="py-2 px-4 border border-gray-300 whitespace-nowrap">{statKey}</th>
+                  <th key={statKey} className="py-2 px-4 border border-blue-500 whitespace-nowrap">{statKey}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {Object.keys(stats[Object.keys(stats)[0]] || {}).map((statKey) => (
                 <tr key={statKey}>
-                  <td className="py-2 px-4 border border-gray-300">{statKey}</td>
+                  <td className="py-2 px-4 border border-blue-500">{statKey}</td>
                   {Object.keys(stats).map((key) => (
-                    <td key={key} className="py-2 px-4 border border-gray-300">{stats[key][statKey]}</td>
+                    <td key={key} className="py-2 px-4 border border-blue-500">{stats[key][statKey]}</td>
                   ))}
                 </tr>
               ))}
