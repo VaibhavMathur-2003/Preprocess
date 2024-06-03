@@ -1,6 +1,6 @@
 import PropTypes from "prop-types";
 
-const StatsAndPlot = ({ headers, correlationHeatmap, plotType, setPlotType, xColumn, setXColumn, yColumn, setYColumn, hue, setHue, plot, handlePlot, handlePrevious, handleDownload }) => (
+const StatsAndPlot = ({ headers, correlationHeatmap, plotType, setPlotType, xColumn, setXColumn, yColumn, setYColumn, hue, setHue, plot, handlePlot, handlePrevious, handleNext, handleDownload }) => (
   <div className="min-h-screen flex items-center justify-center w-full bg-gray-100">
     <div className="bg-white p-8 rounded-lg shadow-md w-full overflow-x-auto">
       
@@ -94,6 +94,12 @@ const StatsAndPlot = ({ headers, correlationHeatmap, plotType, setPlotType, xCol
           Previous
         </button>
         <button 
+          onClick={handleNext} 
+          className="py-2 px-4 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-75"
+        >
+          Next
+        </button>
+        <button 
           onClick={handleDownload} 
           className="py-2 px-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-75"
         >
@@ -118,6 +124,7 @@ StatsAndPlot.propTypes = {
   plot: PropTypes.string,
   handlePlot: PropTypes.func.isRequired,
   handlePrevious: PropTypes.func.isRequired,
+  handleNext: PropTypes.func.isRequired,
   handleDownload: PropTypes.func.isRequired
 };
 

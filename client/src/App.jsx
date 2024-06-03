@@ -183,7 +183,7 @@ const App = () => {
       case 7:
         return <PreProcessedData firstFiveRows={firstFiveRows} stats={stats} handlePrevious={handlePrevious} handleNext={handleNext} handleDownload={handleDownload}  />;
       case 8:
-        return <StatsAndPlot headers={headers}  correlationHeatmap={correlationHeatmap} plotType={plotType} setPlotType={setPlotType} xColumn={xColumn} setXColumn={setXColumn} yColumn={yColumn} setYColumn={setYColumn} hue={hue} setHue={setHue} plot={plot} handlePlot={handlePlot} handlePrevious={handlePrevious} handleDownload={handleDownload}  />;
+        return <StatsAndPlot headers={headers}  correlationHeatmap={correlationHeatmap} plotType={plotType} setPlotType={setPlotType} xColumn={xColumn} setXColumn={setXColumn} yColumn={yColumn} setYColumn={setYColumn} hue={hue} setHue={setHue} plot={plot} handlePlot={handlePlot} handlePrevious={handlePrevious} handleNext={handleNext} handleDownload={handleDownload}  />;
       case 9:
         return <FeatureSelection headers={headers} handlePrevious={handlePrevious} handleNext={handleNext} handleDownload={handleDownload} />;
       default:
