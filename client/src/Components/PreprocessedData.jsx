@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 
 const PreProcessedData = ({ firstFiveRows,stats, handlePrevious, handleNext, handleDownload }) => (
   <div className="min-h-screen flex items-center justify-center bg-gray-800">
-    <div className="bg-white p-8 rounded-lg shadow-md w-full bg-gray-800">
+    <div className=" p-8 rounded-lg shadow-md w-full bg-gray-800">
       <h3 className="text-2xl font-semibold mb-6 text-center text-white">First Five Rows of Preprocessed Data</h3>
       {firstFiveRows.length > 0 && (
         <table className="w-full border-collapse border border-blue-500 text-white">

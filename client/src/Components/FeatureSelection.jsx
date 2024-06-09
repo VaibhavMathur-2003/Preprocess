@@ -135,7 +135,7 @@ const FeatureSelection = ({ headers, handlePrevious, handleDownload }) => {
         <div className="absolute bg-black opacity-25 inset-0 z-0"></div>
         <div className="w-full lg:max-w-2xl md:max-w-md z-10 items-center text-center">
           <div className="font-bold leading-tight mb-6 mx-auto w-full content-center items-center">
-            {/* Add any content here if needed */}
+            <img className="h-1/2 w-5/12 max-h-screen fixed top-[15%] right-[3%]" src="https://media.geeksforgeeks.org/wp-content/uploads/20240123141843/data-types-in-programming.webp" alt="" />
           </div>
         </div>
       </div>

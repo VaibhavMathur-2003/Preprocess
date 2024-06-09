@@ -52,7 +52,8 @@ const MissingValues = ({ headers, preprocessingOptions, handlePreprocessingOptio
       <div className="absolute bg-black opacity-25 inset-0 z-0"></div>
       <div className="w-full lg:max-w-2xl md:max-w-md z-10 items-center text-center">
         <div className="font-bold leading-tight mb-6 mx-auto w-full content-center items-center">
-          {/* Add any content here if needed */}
+        <img className="h-1/2 w-5/12 max-h-screen fixed top-[15%] right-[3%]" src="https://miro.medium.com/v2/resize:fit:1400/1*DsOKWVMAbydzfsXI2A9pMQ.png" alt="" />
+
         </div>
       </div>
     </div>
