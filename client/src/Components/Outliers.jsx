@@ -46,11 +46,36 @@ const Outliers = ({ headers, outlierOptions, handleOutlierOptionChange, handlePr
         </form>
       </div>
     </div>
-    <div className="hidden md:flex flex-auto items-center justify-center p-10 overflow-hidden text-white bg-no-repeat bg-cover relative bg-blue-500">
-      <div className="absolute bg-black opacity-25 inset-0 z-0"></div>
-      <div className="w-full lg:max-w-2xl md:max-w-md z-10 items-center text-center">
-        <div className="font-bold leading-tight mb-6 mx-auto w-full content-center items-center">
-          <img className="h-1/2 w-5/12 max-h-screen fixed top-[15%] right-[3%]" src="https://img.reintech.io/variants/499fvww5p1n80vrdc0yv568ev91r/e7b4ce09c703210ab8f75b017c7eaf0951c5a95b737ee8120602845c1c1d944b" alt="" />
+    <div className="hidden md:flex flex-auto items-center justify-center  text-white bg-no-repeat bg-cover relative bg-blue-500">
+    <div
+        className="relative sm:w-1/2 xl:w-2/5 h-full hidden md:flex flex-auto items-center justify-center  text-black bg-no-repeat bg-cover"
+        style={{
+          backgroundColor: "#e6e2dd",
+          filter: "brightness(1.75)",
+          fontFamily: "Lobster Two, sans-serif",
+        }}
+      >
+        <div className="absolute bg-black opacity-25 inset-0 z-0"></div>
+        <div className="w-full lg:max-w-2xl md:max-w-md z-10 items-center">
+          <div className="font-bold leading-tight mx-auto w-full content-center items-center">
+            <h2
+              className="text-3xl md:text-4xl lg:text-5xl mb-4 text-center"
+              style={{ color: "#000000" }}
+            >
+              What are Outliers?
+            </h2>
+            <img
+              src="https://cdn.pixabay.com/photo/2023/11/12/17/46/ai-generated-8383792_640.jpg"
+              alt="Descriptive Alt Text"
+              className="mx-auto mb-4 rounded-lg shadow-lg w-full max-w-sm"
+            />
+            <p
+              className="text-base md:text-base lg:text-base font-medium leading-relaxed"
+              style={{ color: "#000000", fontFamily:"PT Mono" }}
+            >
+              Handling outliers in data science involves identifying and managing data points that deviate significantly from the majority of the dataset. Outliers can arise due to errors in data collection, measurement variability, or genuine extreme observations. Common approaches for handling outliers include removing them from the dataset, transforming them using techniques like winsorization or log transformation, or treating them separately in the analysis. 
+            </p>
+          </div>
         </div>
       </div>
     </div>

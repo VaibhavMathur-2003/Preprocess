@@ -48,11 +48,43 @@ const Conversion = ({ headers, conversionOptions, handleConversionOptionChange, 
         </form>
       </div>
     </div>
-    <div className="hidden md:flex flex-auto items-center justify-center overflow-hidden text-white bg-no-repeat bg-cover relative bg-blue-500">
-      <div className="absolute bg-black opacity-25 inset-0 z-0"></div>
-      <div className="w-full lg:max-w-2xl md:max-w-md z-10 items-center text-center">
-        <div className="font-bold relative leading-tight mb-6 mx-auto w-full content-center items-center">
-          <img className="h-1/2 w-5/12 max-h-screen fixed top-[15%] right-[3%]" src="https://media.geeksforgeeks.org/wp-content/uploads/20240123141843/data-types-in-programming.webp" alt="" />
+    <div className="md:flex flex-auto items-center justify-center  text-white bg-no-repeat bg-cover relative bg-blue-500">
+    <div
+        className="relative sm:w-1/2 xl:w-2/5 h-full md:flex flex-auto items-center justify-center  text-black bg-no-repeat bg-cover"
+        style={{
+          backgroundColor: "#e6e2dd",
+          filter: "brightness(1.75)",
+          fontFamily: "Lobster Two, sans-serif",
+        }}
+      >
+        <div className="absolute bg-black opacity-25 inset-0 z-0"></div>
+        <div className="w-full lg:max-w-2xl md:max-w-md z-10 items-center">
+          <div className="font-bold leading-tight mx-auto w-full content-center items-center">
+            <h2
+              className="text-3xl md:text-4xl lg:text-5xl mb-4 text-center"
+              style={{ color: "#000000" }}
+            >
+              What is Data Conversion?
+            </h2>
+            <img
+              src="https://img.freepik.com/free-photo/sketch-drawing-cat_1268-30448.jpg?size=626&ext=jpg&ga=GA1.1.777624710.1700978565&semt=sph"
+              alt="Descriptive Alt Text"
+              className="mx-auto mb-4 rounded-lg shadow-lg w-full max-w-sm"
+            />
+            <p
+              className="text-base md:text-base lg:text-base font-medium leading-relaxed"
+              style={{ color: "#000000", fontFamily:"PT Mono" }}
+            >
+              Data preprocessing in data science refers to the steps taken to
+              clean and prepare raw data for analysis. This process involves
+              several key steps:<br/> Cleaning: Removing or correcting inaccurate,
+              incomplete, or irrelevant data. <br/> Transformation: Converting data
+              into a suitable format or structure for analysis, such as
+              normalizing values. <br/> Reduction: Simplifying data by reducing its
+              volume while maintaining its integrity. <br/>  Integration: Combining data
+              from different sources to provide a unified view. 
+            </p>
+          </div>
         </div>
       </div>
     </div>

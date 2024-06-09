@@ -55,11 +55,36 @@ const Scaling = ({ headers, scalingOptions, handleScalingOptionChange, removeDup
         </form>
       </div>
     </div>
-    <div className="hidden md:flex flex-auto items-center justify-center p-10 overflow-hidden text-white bg-no-repeat bg-cover relative bg-blue-500">
-      <div className="absolute bg-black opacity-25 inset-0 z-0"></div>
-      <div className="w-full lg:max-w-2xl md:max-w-md z-10 items-center text-center">
-        <div className="font-bold leading-tight mb-6 mx-auto w-full content-center items-center">
-          <img className="h-1/2 w-5/12 max-h-screen fixed top-[15%] right-[3%]" src="https://media.geeksforgeeks.org/wp-content/uploads/20240123141843/data-types-in-programming.webp" alt="" />
+    <div className="hidden md:flex flex-auto items-center justify-center  text-white bg-no-repeat bg-cover relative bg-blue-500">
+    <div
+        className="relative sm:w-1/2 xl:w-2/5 h-full hidden md:flex flex-auto items-center justify-center  text-black bg-no-repeat bg-cover"
+        style={{
+          backgroundColor: "#e6e2dd",
+          filter: "brightness(1.75)",
+          fontFamily: "Lobster Two, sans-serif",
+        }}
+      >
+        <div className="absolute bg-black opacity-25 inset-0 z-0"></div>
+        <div className="w-full lg:max-w-2xl md:max-w-md z-10 items-center">
+          <div className="font-bold leading-tight mx-auto w-full content-center items-center">
+            <h2
+              className="text-3xl md:text-4xl lg:text-5xl mb-4 text-center"
+              style={{ color: "#000000" }}
+            >
+              What is Scaling?
+            </h2>
+            <img
+              src="https://cdn.pixabay.com/photo/2022/08/21/22/53/butterfly-7402310_640.png"
+              alt="Descriptive Alt Text"
+              className="mx-auto mb-4 rounded-lg shadow-lg w-full max-w-sm"
+            />
+            <p
+              className="text-base md:text-base lg:text-base font-medium leading-relaxed"
+              style={{ color: "#000000", fontFamily:"PT Mono" }}
+            >
+              Scaling in data science refers to the process of transforming numerical features to a similar scale, typically to ensure that no single feature dominates the analysis or modeling process due to its magnitude. This is crucial for algorithms that are sensitive to the scale of input variables. Common scaling techniques include standardization (subtracting the mean and dividing by the standard deviation) and normalization (scaling values to a range between 0 and 1).
+            </p>
+          </div>
         </div>
       </div>
     </div>

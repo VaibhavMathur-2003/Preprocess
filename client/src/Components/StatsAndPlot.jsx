@@ -117,15 +117,50 @@ const StatsAndPlot = ({
         </div>
       )}
     </div>
-    <div className="hidden md:flex flex-auto  justify-center overflow-hidden text-white bg-no-repeat bg-cover relative bg-blue-500">
+    <div className="hidden md:flex flex-auto  justify-center  text-white bg-no-repeat bg-cover relative bg-blue-500 " style={{
+          backgroundColor: "#e6e2dd",
+          filter: "brightness(1.75)",
+          fontFamily: "Lobster Two, sans-serif",
+        }}>
       <div className="absolute bg-black opacity-25 inset-0 z-0"></div>
-      <div className="w-full lg:max-w-2xl md:max-w-md fixed top-[15%] right-[3%] z-10 items-center text-center">
-        {plot && (
+      <div className="w-full lg:max-w-2xl md:max-w-md top-[15%] right-[3%] z-10 items-center text-center">
+        {plot? (
           <div>
             <h3 className="text-xl font-semibold mb-2 text-white">Generated Plot</h3>
             <img className="mx-auto" src={`data:image/png;base64,${plot}`} alt="Generated Plot" />
           </div>
-        )}
+        ):<div className="hidden md:flex flex-auto items-center justify-center text-white bg-no-repeat bg-cover relative bg-blue-500">
+        <div
+            className="relative sm:w-1/2 xl:w-2/5 h-full hidden md:flex flex-auto items-center justify-center  text-black bg-no-repeat bg-cover"
+            style={{
+              backgroundColor: "#e6e2dd",
+              filter: "brightness(1.75)",
+              fontFamily: "Lobster Two, sans-serif",
+            }}
+          >
+            <div className="w-full m-auto lg:max-w-2xl md:max-w-md z-10 items-center">
+              <div className="font-bold leading-tight mx-auto w-full content-center items-center">
+                <h2
+                  className="text-3xl md:text-4xl lg:text-5xl mb-4 text-center"
+                  style={{ color: "#000000" }}
+                >
+                  Data Visualization
+                </h2>
+                <img
+                  src="https://cdn.pixabay.com/photo/2021/02/02/00/51/horse-5972346_1280.png"
+                  alt="Descriptive Alt Text"
+                  className="mx-auto mb-4 rounded-lg shadow-lg w-full max-w-sm"
+                />
+                <p
+                  className="text-base md:text-base lg:text-base font-medium leading-relaxed"
+                  style={{ color: "#000000", fontFamily:"PT Mono" }}
+                >
+                  Involves presenting information visually through graphical representations, such as scatter plots, histograms, bar charts, and heatmaps, among others. These plots enable data scientists to explore and communicate patterns, trends, and relationships within the data effectively. By visually depicting complex datasets, data visualization facilitates understanding, interpretation, and decision-making. 
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>}
       </div>
     </div>
   </div>

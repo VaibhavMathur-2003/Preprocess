@@ -48,12 +48,36 @@ const MissingValues = ({ headers, preprocessingOptions, handlePreprocessingOptio
         </form>
       </div>
     </div>
-    <div className="hidden md:flex flex-auto items-center justify-center p-10 overflow-hidden text-white bg-no-repeat bg-cover relative bg-blue-500">
-      <div className="absolute bg-black opacity-25 inset-0 z-0"></div>
-      <div className="w-full lg:max-w-2xl md:max-w-md z-10 items-center text-center">
-        <div className="font-bold leading-tight mb-6 mx-auto w-full content-center items-center">
-        <img className="h-1/2 w-5/12 max-h-screen fixed top-[15%] right-[3%]" src="https://miro.medium.com/v2/resize:fit:1400/1*DsOKWVMAbydzfsXI2A9pMQ.png" alt="" />
-
+    <div className="hidden md:flex flex-auto items-center justify-center  text-white bg-no-repeat bg-cover relative bg-blue-500">
+      <div
+        className="relative sm:w-1/2 xl:w-2/5 h-full hidden md:flex flex-auto items-center justify-center  text-black bg-no-repeat bg-cover"
+        style={{
+          backgroundColor: "#e6e2dd",
+          filter: "brightness(1.75)",
+          fontFamily: "Lobster Two, sans-serif",
+        }}
+      >
+        <div className="absolute bg-black opacity-25 inset-0 z-0"></div>
+        <div className="w-full lg:max-w-2xl md:max-w-md z-10 items-center">
+          <div className="font-bold leading-tight mx-auto w-full content-center items-center">
+            <h2
+              className="text-3xl md:text-4xl lg:text-5xl mb-4 text-center"
+              style={{ color: "#000000" }}
+            >
+              What is Missing Values Handling?
+            </h2>
+            <img
+              src="https://cdn.pixabay.com/photo/2023/04/17/22/05/compass-7933587_640.png"
+              alt="Descriptive Alt Text"
+              className="mx-auto mb-4 rounded-lg shadow-lg w-full max-w-sm"
+            />
+            <p
+              className="text-base md:text-base lg:text-base font-medium leading-relaxed"
+              style={{ color: "#000000", fontFamily:"PT Mono" }}
+            >
+              Handling missing values in data science is a crucial step in data preprocessing to ensure the quality and accuracy of data analysis. Missing values can arise from various factors like data entry errors, equipment failures, or unrecorded information. Common strategies to address missing data include deletion of incomplete rows or columns, imputation methods where missing values are replaced with mean, median, or mode, and more sophisticated techniques like predictive imputation and K-Nearest Neighbors (KNN).
+            </p>
+          </div>
         </div>
       </div>
     </div>
